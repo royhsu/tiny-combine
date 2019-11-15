@@ -5,7 +5,7 @@
 /// Use an AnySubscriber to wrap an existing subscriber whose details you don’t want to expose. You can also use AnySubscriber to create a custom subscriber by providing closures for the methods defined in Subscriber, rather than implementing Subscriber directly.
 public struct AnySubscriber<Input, Failure> where Failure: Error {
     
-    private let _receiveInput: (Input) -> Subscribers.Demand
+    private let _receiveValue: (Input) -> Subscribers.Demand
     
     private let _receiveSubscription: (Subscription) -> Void
     
@@ -17,7 +17,7 @@ public struct AnySubscriber<Input, Failure> where Failure: Error {
         S.Input == Input,
         S.Failure == Failure {
             
-        self._receiveInput = subscriber.receive
+        self._receiveValue = subscriber.receive
     
         self._receiveSubscription = subscriber.receive
             
@@ -33,7 +33,7 @@ extension AnySubscriber: Subscriber {
     
     public func receive(_ input: Input) -> Subscribers.Demand {
         
-        _receiveInput(input)
+        _receiveValue(input)
         
     }
     

@@ -42,6 +42,8 @@ extension Subscribers.Sink: Subscriber {
         
         self.subscription = subscription
         
+        self.subscription?.request(.unlimited)
+        
     }
     
     public func receive(completion: Subscribers.Completion<Failure>) {

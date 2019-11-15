@@ -26,6 +26,35 @@ extension Subscribers {
     
 }
 
+// MARK: - Equatable
+
+extension Subscribers.Demand: Equatable { }
+
+extension Subscribers.Demand: Comparable {
+    
+    public static func < (
+        lhs: Subscribers.Demand,
+        rhs: Subscribers.Demand
+    )
+    -> Bool {
+        
+        if let lhsMax = lhs.max {
+            
+            if let rhsMax = rhs.max { return lhsMax < rhsMax }
+            else { /* rhs is unlimited. */ return true }
+            
+        }
+        else { // lhs is unlimited.
+            
+            if let _ = rhs.max { return false }
+            else { /* rhs is unlimited. */ return true }
+            
+        }
+        
+    }
+    
+}
+
 extension Subscribers.Demand {
 
     /// Creates a demand for the given maximum number of elements.
