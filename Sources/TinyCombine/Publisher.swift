@@ -92,15 +92,15 @@ extension Publisher {
 
 // MARK: - Mapping Elements
 
-extension Publisher {
-    
-    /// Transforms all elements from the upstream publisher with a provided closure.
-    ///
-    /// - Parameter transform: A closure that takes one element as its parameter and returns a new element.
-    /// - Returns: A publisher that uses the provided closure to map elements from the upstream publisher to new elements that it then publishes.
-    public func map<T>(
-        _ transform: @escaping (Output) -> T
-    )
-    -> Publishers.Map<Self, T> { .init(upstream: self, transform: transform) }
-    
-}
+//extension Publisher {
+//
+//    /// Transforms all elements from the upstream publisher with a provided closure.
+//    ///
+//    /// - Parameter transform: A closure that takes one element as its parameter and returns a new element.
+//    /// - Returns: A publisher that uses the provided closure to map elements from the upstream publisher to new elements that it then publishes.
+//    public func map<T>(
+//        _ transform: @escaping (Output) -> T
+//    )
+//    -> Publishers.Map<Self, T> { .init(upstream: self, transform: transform) }
+//
+//}
