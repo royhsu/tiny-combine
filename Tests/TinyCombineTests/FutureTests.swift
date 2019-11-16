@@ -10,7 +10,7 @@ final class FutureTests: XCTestCase {
         
         var events: [Event<Int, Failure>] = []
         
-        let expectedEvents: [Event<Int, Never>] = [
+        let expectedEvents: [Event<Int, Failure>] = [
             .receiveValue(1),
             .receiveCompletion(.finished),
         ]
