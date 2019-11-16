@@ -6,52 +6,9 @@ import XCTest
 
 final class FutureTests: XCTestCase {
 
-    enum Event<Output, Failure>: Equatable
-    where
-        Output: Equatable,
-        Failure: Error,
-        Failure: Equatable {
-        
-        case receiveValue(Output)
-        
-        case receiveCompletion(Subscribers.Completion<Failure>)
-        
-        static func == (lhs: Event, rhs: Event) -> Bool {
-        
-            switch (lhs, rhs) {
-                
-            case (.receiveValue(let lhsValue), .receiveValue(let rhsValue)):
-                
-                return lhsValue == rhsValue
-                
-            case (
-                .receiveCompletion(let lhsCompletion),
-                .receiveCompletion(let rhsCompletion)
-            ):
-                
-                switch (lhsCompletion, rhsCompletion) {
-                    
-                case (.finished, .finished): return true
-                    
-                case (.failure(let lhsError), .failure(let rhsError)):
-                    
-                    return lhsError == rhsError
-                    
-                default: return false
-                    
-                }
-    
-            default: return false
-                
-            }
-            
-        }
-        
-    }
-    
     func testReceiveValueAndFinishedCompletion() {
         
-        var events: [Event<Int, Never>] = []
+        var events: [Event<Int, Failure>] = []
         
         let expectedEvents: [Event<Int, Never>] = [
             .receiveValue(1),
@@ -110,11 +67,56 @@ final class FutureTests: XCTestCase {
         
     }
     
+    func testReceiveFailureCompletion() {
+        
+        var events: [Event<Int, Failure>] = []
+        
+        let expectedEvents: [Event<Int, Failure>] = [
+            .receiveCompletion(.failure(Failure(id: 1))),
+        ]
+        
+        let didReceiveEvent = expectation(description: "Did receive event.")
+        
+        didReceiveEvent.expectedFulfillmentCount = expectedEvents.count
+        
+        let stream = Future<Int, Failure> { promise in
+            
+            DispatchQueue.global(qos: .background).async {
+
+                promise(.failure(Failure(id: 1)))
+                
+            }
+            
+        }
+            .sink(
+                receiveCompletion: { completion in
+                    
+                    switch completion {
+                        
+                    case .finished: XCTFail("Should end up with failure.")
+                        
+                    case let .failure(error):
+                        
+                        defer { didReceiveEvent.fulfill() }
+                    
+                        XCTAssertEqual(error, Failure(id: 1))
+                        
+                    }
+                    
+                },
+                receiveValue: { _ in XCTFail("Shouldn't receive any value.") }
+            )
+        
+        waitForExpectations(timeout: 10.0)
+        
+    }
+    
 }
 
 extension FutureTests {
     
     static var allTests = [
+        ("testReceiveFailureCompletion", testReceiveFailureCompletion),
         ("testReceiveValueAndFinishedCompletion", testReceiveValueAndFinishedCompletion),
     ]
     
