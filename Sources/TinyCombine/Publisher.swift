@@ -77,14 +77,14 @@ extension Publisher {
     )
     -> AnyCancellable {
         
-        let sink = Subscribers.Sink(
+        let subscriber = Subscribers.Sink(
             receiveCompletion: receiveCompletion,
             receiveValue: receiveValue
         )
         
-        subscribe(sink)
+        subscribe(subscriber)
         
-        return AnyCancellable(sink)
+        return AnyCancellable(subscriber)
         
     }
     
