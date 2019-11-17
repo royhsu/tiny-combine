@@ -113,6 +113,144 @@ final class FutureTests: XCTestCase {
     
 }
 
+final class AssertReceiveEvents<Output, Failure>
+where
+    Output: Equatable,
+    Failure: Error,
+    Failure: Equatable {
+    
+    private let sink: Subscribers.Sink<Output, Failure>
+    
+    init(
+        expectedEvents: [Event<Output, Failure>],
+        didReceiveAllExpectedEvents: @escaping () -> Void
+    ) {
+        
+        var eventIndexOfCurrentPhase = 0
+        
+        let eventOfCurrentPhase: () -> Event<Output, Failure> = {
+            
+            guard eventIndexOfCurrentPhase < expectedEvents.count else {
+                
+                preconditionFailure("Receive more than expected events.")
+                
+            }
+            
+            return expectedEvents[eventIndexOfCurrentPhase]
+            
+        }
+        
+        let checkIfAllEventsReceived: () -> Void = {
+            
+            guard
+                eventIndexOfCurrentPhase == expectedEvents.count - 1
+            else { return }
+                
+            didReceiveAllExpectedEvents()
+            
+        }
+        
+        self.sink = Subscribers.Sink(
+            receiveCompletion: { completion in
+                
+                defer {
+                    
+                    checkIfAllEventsReceived()
+                    
+                    eventIndexOfCurrentPhase += 1
+                    
+                }
+                
+                switch completion {
+                    
+                case .finished:
+                    
+                    XCTAssertEqual(
+                        .receiveCompletion(.finished),
+                        eventOfCurrentPhase()
+                    )
+                    
+                case let .failure(error):
+                    
+                    XCTAssertEqual(
+                        .receiveCompletion(.failure(error)),
+                        eventOfCurrentPhase()
+                    )
+                    
+                }
+                
+            },
+            receiveValue: { value in
+                
+                defer {
+                    
+                    checkIfAllEventsReceived()
+                    
+                    eventIndexOfCurrentPhase += 1
+                    
+                }
+                
+                XCTAssertEqual(
+                    .receiveValue(value),
+                    eventOfCurrentPhase()
+                )
+                
+            }
+        )
+        
+    }
+    
+}
+
+extension AssertReceiveEvents: Subscriber {
+    
+    func receive(_ input: Output) -> Subscribers.Demand {
+        
+        sink.receive(input)
+        
+    }
+    
+    func receive(subscription: Subscription) {
+        
+        sink.receive(subscription: subscription)
+        
+    }
+    
+    func receive(completion: Subscribers.Completion<Failure>) {
+        
+        sink.receive(completion: completion)
+        
+    }
+    
+}
+
+extension AssertReceiveEvents: Cancellable {
+    
+    func cancel() { sink.cancel() }
+    
+}
+
+extension Publisher where Output: Equatable, Failure: Equatable {
+    
+    func assertReceive(
+        expectedEvents: [Event<Output, Failure>],
+        didReceiveAllExpectedEvents: @escaping () -> Void
+    )
+    -> AnyCancellable {
+        
+        let subscriber = AssertReceiveEvents(
+            expectedEvents: expectedEvents,
+            didReceiveAllExpectedEvents: didReceiveAllExpectedEvents
+        )
+        
+        subscribe(subscriber)
+        
+        return AnyCancellable(subscriber)
+        
+    }
+    
+}
+
 extension FutureTests {
     
     static var allTests = [

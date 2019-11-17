@@ -1,53 +1,48 @@
 // MARK: - Map
 
-//import RxSwift
-//
-//extension Publishers {
-//
-//    /// A publisher that transforms all elements from the upstream publisher with a provided closure.
+extension Publishers {
+
+    /// A publisher that transforms all elements from the upstream publisher with a provided closure.
 //    public struct Map<Upstream, Output> where Upstream: Publisher {
 //
-//        private let diposeBag = DisposeBag()
-//
-//        private let outputObservable: Observable<Output>
+//        private let future: Future<Output, Upstream.Failure>
 //
 //        init(
 //            upstream: Upstream,
 //            transform: @escaping (Upstream.Output) -> Output
 //        ) {
 //
-//            self.outputObservable = Observable.create { observer in
+//            #warning("TODO: [Priority: high] we can't use future becuase it can't observe multiple values.")
+//            self.future = Future { promise in
 //
-//                upstream.subscribe(
+//                upstream.receive(
 //                    Subscribers.Sink(
 //                        receiveCompletion: { completion in
 //
 //                            switch completion {
+//                                
+//                            case .finished: break
 //
-//                            case .finished: observer.on(.completed)
-//
-//                            case let .failure(error): observer.on(.error(error))
+//                            case let .failure(error): promise(.failure(error))
 //
 //                            }
 //
 //                        },
-//                        receiveValue: { output in
+//                        receiveValue: { value in
 //
-//                            observer.on(.next(transform(output)))
+//                            promise(.success(transform(value)))
 //
 //                        }
 //                    )
 //                )
-//
-//                return Disposables.create()
 //
 //            }
 //
 //        }
 //
 //    }
-//
-//}
+
+}
 
 // MARK: - Publisher
 
