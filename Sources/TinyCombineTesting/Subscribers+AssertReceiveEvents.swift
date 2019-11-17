@@ -5,7 +5,7 @@ import TinyCombine
 
 extension Subscribers {
 
-    final class AssertReceiveEvents<Output, Failure>
+    public final class AssertReceiveEvents<Output, Failure>
     where
         Output: Equatable,
         Failure: Error,
@@ -90,19 +90,19 @@ extension Subscribers {
 
 extension Subscribers.AssertReceiveEvents: Subscriber {
     
-    func receive(_ input: Output) -> Subscribers.Demand {
+    public func receive(_ input: Output) -> Subscribers.Demand {
         
         sink.receive(input)
         
     }
     
-    func receive(subscription: Subscription) {
+    public func receive(subscription: Subscription) {
         
         sink.receive(subscription: subscription)
         
     }
     
-    func receive(completion: Subscribers.Completion<Failure>) {
+    public func receive(completion: Subscribers.Completion<Failure>) {
         
         sink.receive(completion: completion)
         
@@ -114,7 +114,7 @@ extension Subscribers.AssertReceiveEvents: Subscriber {
 
 extension Subscribers.AssertReceiveEvents: Cancellable {
     
-    func cancel() { sink.cancel() }
+    public func cancel() { sink.cancel() }
     
 }
 

@@ -4,7 +4,7 @@ import TinyCombine
 
 extension Publisher where Output: Equatable, Failure: Equatable {
     
-    func assertReceive(
+    public func assertReceive(
         expectedEvents: [Event<Output, Failure>],
         didReceiveAllExpectedEvents: @escaping () -> Void
     )

@@ -3,7 +3,7 @@
 import TinyCombine
 
 /// All possible events for testing Combine behaviors.
-enum Event<Output, Failure> where Failure: Error {
+public enum Event<Output, Failure> where Failure: Error {
     
     case receiveValue(Output)
     
@@ -15,7 +15,7 @@ enum Event<Output, Failure> where Failure: Error {
 
 extension Event: Equatable where Output: Equatable, Failure: Equatable {
     
-    static func == (lhs: Event, rhs: Event) -> Bool {
+    public static func == (lhs: Event, rhs: Event) -> Bool {
     
         switch (lhs, rhs) {
             

@@ -1,16 +1,27 @@
 // MARK: - FutureTests
 
 import XCTest
+import TinyCombineTesting
 
 @testable import TinyCombine
 
 final class FutureTests: XCTestCase {
 
+    var stream: AnyCancellable?
+    
+    override func tearDown() {
+        
+        stream = nil
+        
+        super.tearDown()
+        
+    }
+    
     func testReceiveValueAndFinishedCompletion() {
         
         let didReceiveAllEvents = expectation(description: "Did receive all events.")
         
-        let stream = Future<Int, Never> { promise in
+        stream = Future<Int, Never> { promise in
             
             DispatchQueue.global(qos: .background).async {
 
@@ -35,7 +46,7 @@ final class FutureTests: XCTestCase {
         
         let didReceiveAllEvents = expectation(description: "Did receive all events.")
         
-        let stream = Future<Int, Failure> { promise in
+        stream = Future<Int, Failure> { promise in
             
             DispatchQueue.global(qos: .background).async {
 
