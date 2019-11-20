@@ -9,10 +9,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "TinyCombine"),
-        .target(
-            name: "TinyCombineTesting",
-            dependencies: [ "TinyCombine", ]
-        ),
+        .target(name: "TinyCombineTesting", dependencies: [ "TinyCombine", ]),
         .testTarget(
             name: "TinyCombineTests",
             dependencies: [ "TinyCombine", "TinyCombineTesting", ]
