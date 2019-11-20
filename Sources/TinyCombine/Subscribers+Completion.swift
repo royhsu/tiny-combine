@@ -14,3 +14,7 @@ extension Subscribers {
     }
     
 }
+
+// MARK: - Equatable
+
+extension Subscribers.Completion: Equatable where Failure: Equatable { }
